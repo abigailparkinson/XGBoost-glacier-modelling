@@ -52,6 +52,13 @@ The project has three main phases
    - The best performing model, based on agreement with observed data and out-of-fold R², was selected and applied to the future climate projections of the Bussemand catchment
 
 # Repository Structure
+```
+├── README.md
+├── requirements.txt
+├── notebooks/
+│   ├──
+
+```
 
 # Setup and Installation
 
