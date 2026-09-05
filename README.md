@@ -6,7 +6,7 @@ This repository contains the complete code, a workflow overview and documentatio
 - [Technical Stack](#technical-stack)
 - [Workflow](#workflow)
 - [Setup and Installation](#setup-and-installation)
-- [How to Run](#how-to-run)
+- [Usage Guide](#usage-guide)
 
 # Project Overview
 The project developed an XGBoost model to reconstruct and predict glacier mass balance, applied here in the Bussemand catchment in Greenland, but designed to be applicable anywhere. Performance was compared with a traditional temperature-index model, and feature importance and SHAP analyses were used to assess controls on mass balance variability. The model was applied to a higher resolution dataset of the Bussemand catchment, and future climate projections to evaluate its scalability and predictive capability under future climate conditions.
@@ -35,9 +35,10 @@ The project developed an XGBoost model to reconstruct and predict glacier mass b
 - CMIP6 temperature and precipitation projections (same units as above) (https://doi.org/10.24381/cds.c866074c.)
 
 # Workflow
+Not included in the scripts in this repository is the QGIS workflow. Temperature, albedo and the training mass balance data were all in raster form and analysed in QGIS. A 1 x 1 km grid of the Bussemand catchment was generated, and raster values were assigned to each grid using zonal statistics.
 The project has three main phases
 1. **Phase 1: data derivation**
-   - DDerived monthly positive degree days from PROMICE temperature observations, with ERA5-supported interpolation where necessary
+   - Derived monthly positive degree days from PROMICE temperature observations, with ERA5-supported interpolation where necessary
    - Applied lapse-rate corrections using the IceBridge DEM
    - Derived precipitation volumes from ERA5 precipitation data, and calculated snowfall-rainfall percentages from temperature
    - Calculated monthly glacier-wide albedo from Landsat-8/9 imagery, with missing values estimated using random forest regression
@@ -55,11 +56,53 @@ The project has three main phases
 ```
 ├── README.md
 ├── requirements.txt
-├── notebooks/
-│   ├──
+├── scripts/
+│   ├── 01-climate-cleaning.py
+│   ├── 02-lapse_rate_calculations.py
+│   ├── 03-precipitation_joining.py
+│   ├── 04-Landsat-8-9_albedo_calculation.py
+│   ├── 05-CMIP6_temperature_extraction.py
+│   ├── 06-CMIP6_precipitation_extraction_and_joining.py
+│   ├── 07-albedo_cleaning.py
+│   └── 08-model_development.py
 
 ```
 
 # Setup and Installation
+## 1. Clone the Repository
+```bash
+git clone https://github.com/<username>/XGBoost-glacier-modelling.git
+cd XGBoost-glacier-modelling
+```
+## 2. Create Python Environment (recommended)
+```bash
+python -m venv .venv
+```
+## 3. Install Required Packages
+```bash
+pip install -r requirements.txt
+```
 
-# How to Run
+## 4. Download Input Data
+The scripts require:
+- Daily temperature observations with coordinates
+- Monthly precipitation volume
+- ERA5 observations from the region of observed temperature
+- Landsat-8/9 imagery
+- DEM for the relevant area
+- CMIP6 projections
+- Geodetic mass balance dataset of the desired catchment area
+Any catchment can be studied using the workflow of this project, so datasets from any glacier catchment can be selected to fulfil the dataset criteria (provided they all cover the same catchment)
+Links to datasets used in this specific project are provided in the **Datasets Used** section above
+
+# Usage Guide
+1. **Download necessary data**: acquire the datasets of your chosen catchment and download these into the relevant directory
+2. **Dataset derivation**: apply the scripts in the following way:
+   - 01-climate-cleaning.py: apply to the catchment daily climate observations with ERA5 readings to get a cleaned dataset of daily climate observations
+   - 02-lapse_rate_calculations.py: apply to the daily climate observations to get monthly mean temperature and PDD rasters. Process these rasters using zonal statistics in QGIS
+   - 03-precipitation_joining.py: join the monthly precipitation to the exported grid CSV with processed temperature values
+   - 04-Landsat-8-9_albedo_calculation.py: apply to Landsat imagery to create rasters to be processed in QGIS
+   - 05-CMIP6_temperature_extraction.py: apply to the NC files of CMIP6 temperature projections to get temperature projections until 2100. Apply 02-lapse_rate_calculations.py to these datasets to get temperature rasters for future climate
+   - 06-CMIP6_precipitation_extraction_and_joining.py: apply to NC files of CMIP6 precipitation projections and join onto the grids with future climate projections
+   - 07-albedo_cleaning.py: applied to all grid datasets. The observed data grid is used to train the random forest model, and then the trained random forest model is applied to future climate projections to fill future albedo projections
+3. **Model Development**: use the 08-model_development.py script to build, plot the outputs and evaluates the temperature-index model and XGBoost model. The XGBoost model script is in a loop, and can be automatically applied to feature sets with various complexity
