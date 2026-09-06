@@ -106,3 +106,16 @@ Links to datasets used in this specific project are provided in the **Datasets U
    - 06-CMIP6_precipitation_extraction_and_joining.py: apply to NC files of CMIP6 precipitation projections and join onto the grids with future climate projections
    - 07-albedo_cleaning.py: applied to all grid datasets. The observed data grid is used to train the random forest model, and then the trained random forest model is applied to future climate projections to fill future albedo projections
 3. **Model Development**: use the 08-model_development.py script to build, plot the outputs and evaluates the temperature-index model and XGBoost model. The XGBoost model script is in a loop, and can be automatically applied to feature sets with various complexity
+
+# Results
+
+## XGBoost model outputs
+The results of training the model on several feature sets found that, for the Bussemand catchment, increasing model complexity improved the predictive accuracy of the model. This is visualised in the figures below
+<img width="1280" height="612" alt="updated cumulative" src="https://github.com/user-attachments/assets/cc8d211c-fdfc-4ae1-ac0a-069c21ccbed9" />
+<img width="1280" height="612" alt="updated mb" src="https://github.com/user-attachments/assets/72abe78f-2b04-4ef8-98c6-5351f60fa8f8" />
+The predicted thickness change and mass balance of the most complex model follows observed values most closely, with particular improvements coming from adding seasonality and lagged variables. The SHAP analysis supports that these variables are very important, alongside temperature.
+<img width="800" height="550" alt="all features beeswarm" src="https://github.com/user-attachments/assets/c50467f3-aaf2-469d-bd19-a7b33a253789" />
+The model development also found that the XGBoost model outperformed the temperature index models for the Bussemand catchment. The temperature index model successfully captures long term trends relatively well, but fails to capture short-term variability.
+<img width="1280" height="612" alt="cal ti" src="https://github.com/user-attachments/assets/8d05ffb8-9bd0-486f-9db0-7b9980c2bf1d" />
+<img width="1280" height="612" alt="cal ti mb" src="https://github.com/user-attachments/assets/95c460b3-0c52-4694-a0b9-765d43e77849" />
+The XGBoost model of mass balance in the Bussemand catchment reconstructs accumulation and ablation dynamics much more accurately than the temperature index models, supporting the reconstructive and capacity of XGBoost modelling for mass balance variability.
