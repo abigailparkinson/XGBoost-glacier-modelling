@@ -1,5 +1,5 @@
 # XGBoost-glacier-modelling
-This repository contains the complete code, a workflow overview and documentation for a project assessing the performance of XGBoost frameworks in glacier modelling, looking specifically at the Bussemand catchment in Greenland. The project utilises several publicly available data sources to develop the XGBoost model.
+This repository contains the complete code, a workflow overview and documentation for a project assessing the performance of XGBoost frameworks in glacier modelling, looking specifically at the Bussemand catchment in Greenland. The project utilises several publicly available data sources to develop the XGBoost model. The code provided in this repository can be applied to any glacier catchment globally.
 
 # Table of Contents
 - [Project Overview](#project-overview)
